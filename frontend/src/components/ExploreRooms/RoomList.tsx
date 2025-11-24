@@ -57,7 +57,7 @@ const RoomsList = ({ searchParams }: { searchParams: { roomType: string; guests:
     return () => observer.disconnect();
   }, [isLoading, filteredRooms.length]);
 
-  // 👇 Detect when the expanded button leaves the viewport
+  // Detect when the expanded button leaves the viewport
   useEffect(() => {
     const target = buttonRef.current;
     if (!target) return;

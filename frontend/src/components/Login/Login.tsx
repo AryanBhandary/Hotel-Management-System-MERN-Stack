@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { loginUser } from "../../services/authUser";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
 
+  // Auto redirect if already logged in
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) navigate("/allRooms");
+    if (localStorage.getItem("token")) {
+      navigate("/allRooms");
+    }
   }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,21 +20,37 @@ const Login: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await loginUser(formData.email, formData.password);
-      if (response) {
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-        alert("Logged in successfully!");
-        navigate("/allRooms");
-      } else {
-        alert("Invalid email or password!");
-      }
-    } catch (error: any) {
-      alert(error.message);
+  e.preventDefault();
+
+  if (!formData.email || !formData.password) {
+    alert("Please enter both email and password.");
+    return;
+  }
+
+  try {
+    const response = await loginUser(formData.email, formData.password);
+
+    if (!response) {
+      alert("Invalid email or password!");
+      return;
     }
-  };
+
+    localStorage.setItem("token", response.token);
+    localStorage.setItem("user", JSON.stringify(response.user));
+
+    alert("Logged in successfully!");
+    navigate("/allRooms");
+
+  } catch (error: any) {
+    const msg =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Login failed. Try again.";
+
+    alert(msg);
+  }
+};
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[var(--color-bg-light)] px-4 sm:px-6 lg:px-8">
@@ -79,7 +96,10 @@ const Login: React.FC = () => {
 
         <p className="text-center text-sm mt-4 text-[var(--color-secondary)]">
           Don’t have an account?{" "}
-          <Link to="/signup" className="text-[var(--color-primary)] font-medium hover:underline">
+          <Link
+            to="/signup"
+            className="text-[var(--color-primary)] font-medium hover:underline"
+          >
             Sign up
           </Link>
         </p>
