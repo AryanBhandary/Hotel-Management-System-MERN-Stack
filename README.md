@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🏨 Hotel Room Booking (React + TypeScript + TailwindCSS)
 
 A responsive hotel room booking system built with **React, TypeScript, and TailwindCSS**.  
@@ -27,7 +28,7 @@ It allows users to search, filter, and view available rooms with infinite scroll
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/aryanbhandary/hotel-management-system.git
+git clone https://github.com/interncnw/Hotel-management-system.git
 cd hotel-management-system
 npm install
 npm run dev
@@ -42,3 +43,6 @@ npm run dev
 - ✅ Payment integration
 
 
+=======
+# Hotel-management-system
+>>>>>>> 500060c60564b2e5e63c3633dddedac340069d72
