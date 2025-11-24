@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🏨 Hotel Room Booking (React + TypeScript + TailwindCSS)
 
 A responsive hotel room booking system built with **React, TypeScript, and TailwindCSS**.  
@@ -42,3 +43,6 @@ npm run dev
 - ✅ Payment integration
 
 
+=======
+# Hotel-management-system
+>>>>>>> 500060c60564b2e5e63c3633dddedac340069d72
