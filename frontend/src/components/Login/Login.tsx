@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { loginUser } from "../../services/authUser";
 import { useNavigate, Link } from "react-router-dom";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Auto redirect if already logged in
+  // Redirect if already logged in
   useEffect(() => {
     if (localStorage.getItem("token")) {
       navigate("/allRooms");
@@ -20,37 +20,42 @@ const Login: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!formData.email || !formData.password) {
-    alert("Please enter both email and password.");
-    return;
-  }
-
-  try {
-    const response = await loginUser(formData.email, formData.password);
-
-    if (!response) {
-      alert("Invalid email or password!");
+    if (!formData.email || !formData.password) {
+      alert("Please enter both email and password.");
       return;
     }
 
-    localStorage.setItem("token", response.token);
-    localStorage.setItem("user", JSON.stringify(response.user));
+    setLoading(true);
 
-    alert("Logged in successfully!");
-    navigate("/allRooms");
+    try {
+      const res = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, password: formData.password }),
+      });
 
-  } catch (error: any) {
-    const msg =
-      error?.response?.data?.message ||
-      error?.message ||
-      "Login failed. Try again.";
+      const data = await res.json();
 
-    alert(msg);
-  }
-};
+      if (!res.ok) {
+        alert(data.message || "Invalid email or password!");
+        setLoading(false);
+        return;
+      }
 
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      alert("Logged in successfully!");
+      navigate("/allRooms");
+    } catch (err) {
+      console.error(err);
+      alert("Login failed. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[var(--color-bg-light)] px-4 sm:px-6 lg:px-8">
@@ -89,8 +94,8 @@ const Login: React.FC = () => {
             </button>
           </div>
 
-          <button type="submit" className="sub-btn">
-            Log In
+          <button type="submit" className="sub-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
 
